@@ -1,0 +1,42 @@
+两个分开 15k     0.447 0.437 0.431
+color aug 15k  0.451
+color aug， 不忽略边缘 小的size＝5 15k 4.61
+新图片， 修改参数， color aug，不忽略边缘 大的 小的size＝5 15k 4.77
+
+
+
+some tip:
+
+changing from resnet50 to se-resnext50 backbone improve the gray image score from 0.419 to 0.430.
+
+note:
+
+if you want to get high LB score, you most improve the mask non-max suppression provided. Together with other improvement like class balancing, adjusting network structure, etc you can above 0.450 just with the gray images alone.
+
+
+for color images, you need to treat it as a separate class.
+
+if you treat all images as single class, then the common thing for all of them is only outline, which is very weak feature.
+
+if you treat them as separate classes, you will have more common things within a class (e.g. the interior is also the same within the class)
+
+I train two separate mask-rcnn, one on gray images and another on purple images (converted to gray scale). both perform reasonably well.
+
+
+All trained model and results are on gray images only. By submitting 53 gray images, you get LB score of 0.419 (i.e. 0.5139 = 0.419/65*53 per image on average)
+
+
+for the current code, automatic rate schedule is disabled (see " LR = None ").
+
+i use manual schedule instead. i.e set rate =0.01 and then run and monitor the loss. when the loss does not improve, i restart the training with rate=0.001, loading the previous weights as initialization.
+
+i need to check all 4 loss of mask rcnn are balanced and compare each of the 4 loss for train and validation set. So it is easier to use manual schedule.
+
+
+currently, just use the mask from the higher score detection box. it will be placed on "top" and overwrite any previous pixel label.
+
+1. use merage   https://www.kaggle.com/bonlime/train-test-image-mosaic
+2. balance traing 
+3. small box
+4. mask loss pay more attention and also post processing
+

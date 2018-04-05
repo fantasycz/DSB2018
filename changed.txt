@@ -1,0 +1,11 @@
+1. lorder "cv2.read" to "image.open"
+
+2. parameter as 15.4
+
+
+
+
+
+
+
+2. train and test torch tensor minius 0.5
